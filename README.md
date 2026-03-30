@@ -18,8 +18,10 @@
 - 🌍 **跨平台**：Windows/macOS/Linux全支持
 - 🎯 **多业务**：健身房、餐厅、诊所、高尔夫
 - ⚙️ **配置化**：灵活的业务配置和主题定制
-- � **可适配**：现有项目快速适配新业务
-- 📦 **开箱即用**：完整工具链，零配置启动
+- 🔄 **可适配**：现有项目快速适配新业务
+- 🎨 **高度可定制**：生成后可自由修改和扩展
+- 📦 **模块化**：支持添加任何npm包和功能
+- 🛠️ **完整控制**：代码结构清晰，完全可改造
 
 ---
 
@@ -52,6 +54,117 @@ npm run dev
 | 🍽️ restaurant | 餐桌 | 位 | 120分钟 | 12位 | 橙色 |
 | 🏥 clinic | 诊室 | 人 | 30分钟 | 1人 | 蓝色 |
 | 🏌️ golf | 打位 | 人 | 60分钟 | 4人 | 绿色 |
+
+---
+
+## 🎨 自定义开发
+
+### 🚀 不只是模板生成器！
+
+Dev Skills 不是限制你只能生成固定项目的工具，而是一个**高度可扩展的项目脚手架**：
+
+#### ✨ 预设模板（快速开始）
+- 🏋️ 健身房、🍽️ 餐厅、🏥 诊所、🏌️ 高尔夫
+- 5分钟启动，开箱即用
+
+#### 🛠️ 完全自定义（无限可能）
+生成项目后，你可以：
+
+##### 📦 添加任何模块
+```bash
+# 进入生成的项目
+cd my-project
+
+# 添加任何你需要的npm包
+npm install stripe        # 支付系统
+npm install socket.io     # 实时通信
+npm install puppeteer     # 爬虫工具
+npm install express       # 后端API
+```
+
+##### 🎯 修改业务逻辑
+```typescript
+// config/business.config.ts
+export const businessConfig = {
+  name: "我的自定义业务",
+  entity: "任何实体",        // 改成任何你想要的
+  capacityUnit: "自定义单位",
+  timeSlotDuration: 60,     // 自定义时段
+  maxCapacity: 10,          // 自定义容量
+  // ... 完全可配置
+};
+```
+
+##### 🗄️ 扩展数据库
+```prisma
+// prisma/schema.prisma
+model CustomEntity {
+  id      Int      @id @default(autoincrement())
+  name    String
+  // 添加任何你需要的字段
+  customField String?
+  anotherField Decimal?
+}
+```
+
+##### 🎨 重新设计UI
+```typescript
+// 任何组件都可以完全重写
+export default function CustomPage() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-600">
+      {/* 完全自定义的设计和功能 */}
+    </div>
+  )
+}
+```
+
+### 🌟 实际案例
+
+#### 🏨 酒店预订系统
+```bash
+# 基于餐厅模板生成
+node scripts/generate-project.js --name "hotel-booking" --business restaurant
+
+# 自定义改造
+# - 把"餐桌"改成"房间"
+# - 把"120分钟时段"改成"24小时住宿"
+# - 添加房间类型（大床房/双床房）
+# - 集成OTA平台接口
+```
+
+#### 💇 美发沙龙
+```bash
+# 基于健身房模板生成
+node scripts/generate-project.js --name "hair-salon" --business fitness
+
+# 自定义改造
+# - 把"课程"改成"造型服务"
+# - 把"教练"改成"发型师"
+# - 添加会员卡系统
+# - 集成微信支付
+```
+
+#### 🎓 教育培训
+```bash
+# 基于诊所模板生成
+node scripts/generate-project.js --name "education-center" --business clinic
+
+# 自定义改造
+# - 把"诊室"改成"教室"
+# - 把"医生"改成"老师"
+# - 添加课程管理
+# - 集成在线支付
+```
+
+### 💡 核心理念
+
+**Dev Skills 给你的不是一个固定的房子，而是一个可以随意改造的精装房！**
+
+- 🚀 **快速启动**：用预设模板避免从零开始
+- 🎯 **保持标准**：代码结构和最佳实践保持一致
+- 🛠️ **完全自由**：后续可以改造成任何样子
+- ⏰ **节省时间**：避免重复的搭建工作
 
 ---
 
