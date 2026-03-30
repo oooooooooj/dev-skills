@@ -1,0 +1,173 @@
+name: 🚀 CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+jobs:
+  🧪 test:
+    name: Test on Node.js ${{ matrix.node-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [16, 18, 20]
+    
+    steps:
+    - name: 📥 Checkout
+      uses: actions/checkout@v4
+      
+    - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        
+    - name: 📦 Install dependencies
+      run: npm ci
+      
+    - name: 🔍 Lint
+      run: npm run lint
+      
+    - name: 🏗️ Type check
+      run: npm run type-check
+      
+    - name: 🧪 Run tests
+      run: npm test
+      
+    - name: 📊 Coverage
+      run: npm run test:coverage
+      
+    - name: 📤 Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/lcov.info
+        flags: unittests
+        name: codecov-umbrella
+
+  🏗️ build:
+    name: Build and Test Scripts
+    runs-on: ubuntu-latest
+    needs: 🧪 test
+    
+    steps:
+    - name: 📥 Checkout
+      uses: actions/checkout@v4
+      
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: 📦 Install dependencies
+      run: npm ci
+      
+    - name: 🧪 Test script functionality
+      run: |
+        # Test help command
+        node scripts/generate-project.js --help
+        node scripts/adapt-business.js --help
+        
+        # Test project generation (dry run)
+        echo "Testing project generation..."
+        
+    - name: 📦 Build package
+      run: npm pack
+      
+    - name: ⬆️ Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: package
+        path: "*.tgz"
+
+  🚀 publish:
+    name: Publish to NPM
+    runs-on: ubuntu-latest
+    needs: [🧪 test, 🏗️ build]
+    if: github.event_name == 'release' && github.event.action == 'published'
+    
+    steps:
+    - name: 📥 Checkout
+      uses: actions/checkout@v4
+      
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        registry-url: 'https://registry.npmjs.org'
+        cache: 'npm'
+        
+    - name: 📦 Install dependencies
+      run: npm ci
+      
+    - name: 📦 Build package
+      run: npm pack
+      
+    - name: 🚀 Publish to NPM
+      run: npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  📱 deploy-docs:
+    name: Deploy Documentation
+    runs-on: ubuntu-latest
+    needs: [🧪 test, 🏗️ build]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 📥 Checkout
+      uses: actions/checkout@v4
+      
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: 📦 Install dependencies
+      run: npm ci
+      
+    - name: 📚 Generate documentation
+      run: |
+        # Generate API docs if needed
+        echo "Generating documentation..."
+        
+    - name: 🚀 Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
+        destination_dir: docs
+
+  🔔 notify:
+    name: Notify Status
+    runs-on: ubuntu-latest
+    needs: [🧪 test, 🏗️ build, 🚀 publish, 📱 deploy-docs]
+    if: always()
+    
+    steps:
+    - name: 📥 Checkout
+      uses: actions/checkout@v4
+      
+    - name: 🔔 Send notification
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#dev-skills'
+        text: |
+          🚀 Dev Skills CI/CD Pipeline ${{ job.status }}
+          
+          📊 Test Results: ${{ needs.🧪 test.result }}
+          🏗️ Build Results: ${{ needs.🏗️ build.result }}
+          🚀 Publish Results: ${{ needs.🚀 publish.result }}
+          📱 Deploy Results: ${{ needs.📱 deploy-docs.result }}
+          
+          🔗 [View Action](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      if: always()

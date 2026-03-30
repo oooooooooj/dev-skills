@@ -1,0 +1,51 @@
+{
+  "name": "dev-skills",
+  "version": "1.0.0",
+  "description": "本地技能库 - 快速生成高质量项目的工具集",
+  "main": "scripts/generate-project.js",
+  "bin": {
+    "generate-project": "./scripts/generate-project.js",
+    "adapt-business": "./scripts/adapt-business.js"
+  },
+  "scripts": {
+    "generate-project": "node scripts/generate-project.js",
+    "adapt-business": "node scripts/adapt-business.js",
+    "test": "node scripts/test-scripts.js",
+    "install-global": "npm install -g .",
+    "link": "npm link"
+  },
+  "keywords": [
+    "project-generator",
+    "template",
+    "booking-system",
+    "business-adapter",
+    "development-tools",
+    "nodejs",
+    "cross-platform"
+  ],
+  "author": "Dev Skills Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "fs-extra": "^11.1.1",
+    "commander": "^11.0.0",
+    "chalk": "^4.1.2",
+    "inquirer": "^8.2.6"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "eslint": "^8.57.0",
+    "prettier": "^3.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/dev-skills.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/dev-skills/issues"
+  },
+  "homepage": "https://github.com/your-username/dev-skills#readme",
+  "preferGlobal": true
+}
